@@ -71,30 +71,30 @@ app requires an API endpoint to retrieve the ten (10) latest URLs submitted. It
 should be a JSON API compliant endpoint. Here is an example of what the response
 should look like:
 
-    ```json
+```json
+{
+  "data": [
     {
-      "data": [
-        {
-          "type": "urls",
-          "id": "1",
-          "attributes": {
-            "created-at": "2018-08-15T02:48:08.642Z",
-            "original-url": "http://www.fullstacklabs.com",
-            "url": "https://app-domain/a",
-            "clicks": 1000000
-          },
-          "relationships": {
-            "metrics": {
-              "data": [
-                {
-                  "id": 1,
-                  "type": "metrics"
-                }
-              ]
+      "type": "urls",
+      "id": "1",
+      "attributes": {
+        "created-at": "2018-08-15T02:48:08.642Z",
+        "original-url": "http://www.fullstacklabs.com",
+        "url": "https://app-domain/a",
+        "clicks": 1000000
+      },
+      "relationships": {
+        "metrics": {
+          "data": [
+            {
+              "id": 1,
+              "type": "metrics"
             }
-          }
+          ]
         }
-      ],
-      "included": []
+      }
     }
-    ```
+  ],
+  "included": []
+}
+```
