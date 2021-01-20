@@ -1,0 +1,179 @@
+{% extends "heyurl/main.html" %}
+
+{% block page_header_css %}
+
+<link rel="StyleSheet" href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap4.min.css" type="text/css"/>
+
+{% endblock %}
+
+{% block page_header_js %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js" integrity="sha512-BkpSL20WETFylMrcirBahHfSnY++H2O1W+UnEEO4yNIl+jI2+zowyoGJpbtk6bx97fBXf++WJHSSK2MV4ghPcg==" crossorigin="anonymous"></script>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-8 offset-sm-2">
+    <div class="card mb-sm-4">
+      <div class="card-header text-white bg-success">
+        Graphical Click Data
+      </div>
+      <div class="card-body">
+        <canvas id="bar-chart-horizontal" width="800" height="450"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-8 offset-sm-2">
+    <div class="card mb-sm-4">
+      <div class="card-header text-white bg-primary">
+        Tabular Browser Data
+      </div>
+      <div class="card-body">
+        <table id="url_browser_table" class="table" style="width:100%">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Browser</th>
+              <th>Clicks</th>
+              <th>Percentage</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-8 offset-sm-2">
+    <div class="card mb-sm-4">
+      <div class="card-header text-white bg-primary">
+        Tabular Platform Data
+      </div>
+      <div class="card-body">
+        <table id="url_platform_table" class="table" style="width:100%">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Platform</th>
+              <th>Clicks</th>
+              <th>Percentage</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-8 offset-sm-2">
+    <div class="card mb-sm-4">
+      <div class="card-header text-white bg-danger">
+        Click Log Data
+      </div>
+      <div class="card-body">
+        <table id="url_click_log_table" class="table" style="width:100%">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Browser</th>
+              <th>Platform</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block page_footer_js %}
+
+<script>
+
+  var data = {{data | safe}};
+  var infolists = buildLists(data['daily_count_list'].length);
+
+  function buildLists(l) {
+    var dayslist = new Array(l);
+    var colorlist = new Array(l);
+    for (let j=1; j<=l; j++) {
+      dayslist[j-1] = j;
+      if (j%2==1) {
+        colorlist[j-1] = "#3e95cd";
+      } else {
+        colorlist[j-1] = "#3cba9f";
+      }
+    }
+    return [dayslist,colorlist];
+  }
+
+  new Chart(document.getElementById("bar-chart-horizontal"), {
+      type: 'horizontalBar',
+      data: {
+        labels: infolists[0],
+        datasets: [
+          {
+            label: "Total Clicks",
+            backgroundColor: infolists[1],
+            data: data['daily_count_list']
+          }
+        ]
+      },
+      options: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: 'Total Clicks By Date'
+        },
+        scales: {
+          xAxes: [{
+            ticks: {
+              min : 0,
+              stepSize : 1
+            }
+          }]
+        }
+      }
+  });
+
+['browser','platform'].forEach( function (item) {
+  $('#url_' + item + '_table').DataTable( {
+    "destroy":true,
+    "data":data[item],
+    "columns" :
+      [
+        {"data" : "Date"},
+        {"data" : item },
+        {"data" : "Clicks"},
+        {"data" : "Percentage"}
+      ]
+  });
+});
+
+$('#url_click_log_table').DataTable( {
+  "destroy":true,
+  "data":data['click_log'],
+  "columns" :
+    [
+      {"data" : "Date"},
+      {"data" : "Time" },
+      {"data" : "browser"},
+      {"data" : "platform"}
+    ]
+});
+</script>
+
+{% endblock %}

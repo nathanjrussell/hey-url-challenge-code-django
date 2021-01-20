@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HeyURL!</title>
+
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'heyurl/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'heyurl/style.css' %}">
+
+    {% block page_header_css %}
+    {% endblock %}
+
+    {% block page_header_js %}
+    {% endblock %}
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-sm-4">
+      <a class="navbar-brand" href="#">HeyURL!</a>
+    </nav>
+    <div class="container-fluid">
+
+      {% block content %}
+      {% endblock %}
+
+    </div>
+
+  {% block page_footer_js %}
+  {% endblock %}
+  </body>
+</html>
